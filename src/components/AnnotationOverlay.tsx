@@ -1,10 +1,11 @@
 import { memo } from "react";
-import type { PositionedAnnotation } from "../types";
+import type { PositionedAnnotation, TypeConfig } from "../types";
 import { AnnotationCard } from "./AnnotationCard";
 
 interface AnnotationOverlayProps {
 	annotations: PositionedAnnotation[];
 	totalAnnotations: number;
+	allTypes: TypeConfig[];
 	onAccept: (id: number) => void;
 	onDismiss: (id: number) => void;
 }
@@ -12,6 +13,7 @@ interface AnnotationOverlayProps {
 export const AnnotationOverlay = memo(function AnnotationOverlay({
 	annotations,
 	totalAnnotations,
+	allTypes,
 	onAccept,
 	onDismiss,
 }: AnnotationOverlayProps) {
@@ -27,6 +29,7 @@ export const AnnotationOverlay = memo(function AnnotationOverlay({
 					<AnnotationCard
 						key={annotation.id}
 						annotation={annotation}
+						allTypes={allTypes}
 						onAccept={onAccept}
 						onDismiss={onDismiss}
 					/>

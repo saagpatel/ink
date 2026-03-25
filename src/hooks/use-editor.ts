@@ -59,6 +59,7 @@ interface UseEditorOptions {
 	onDismissAnnotation?: () => void;
 	onToggleSettings?: () => void;
 	onToggleHistory?: () => void;
+	onToggleSearch?: () => void;
 }
 
 export function useEditor({
@@ -68,6 +69,7 @@ export function useEditor({
 	onDismissAnnotation,
 	onToggleSettings,
 	onToggleHistory,
+	onToggleSearch,
 }: UseEditorOptions = {}) {
 	const viewRef = useRef<EditorView | null>(null);
 	const containerRef = useRef<HTMLDivElement | null>(null);
@@ -77,6 +79,7 @@ export function useEditor({
 	const onDismissRef = useRef(onDismissAnnotation);
 	const onSettingsRef = useRef(onToggleSettings);
 	const onHistoryRef = useRef(onToggleHistory);
+	const onSearchRef = useRef(onToggleSearch);
 
 	onSaveRef.current = onSave;
 	onChangeRef.current = onChange;
@@ -84,6 +87,7 @@ export function useEditor({
 	onDismissRef.current = onDismissAnnotation;
 	onSettingsRef.current = onToggleSettings;
 	onHistoryRef.current = onToggleHistory;
+	onSearchRef.current = onToggleSearch;
 
 	const initEditor = useCallback(
 		(container: HTMLDivElement, content: string) => {
@@ -124,6 +128,13 @@ export function useEditor({
 					key: "Mod-Shift-h",
 					run: () => {
 						onHistoryRef.current?.();
+						return true;
+					},
+				},
+				{
+					key: "Mod-Shift-f",
+					run: () => {
+						onSearchRef.current?.();
 						return true;
 					},
 				},

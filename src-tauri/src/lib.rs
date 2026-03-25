@@ -17,6 +17,12 @@ pub fn run() {
             sql: include_str!("../migrations/002_settings.sql"),
             kind: MigrationKind::Up,
         },
+        Migration {
+            version: 3,
+            description: "custom_annotation_types",
+            sql: include_str!("../migrations/003_custom_types.sql"),
+            kind: MigrationKind::Up,
+        },
     ];
 
     tauri::Builder::default()

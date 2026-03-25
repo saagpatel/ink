@@ -1,23 +1,18 @@
-import type { Annotation, AnnotationType } from "../types";
-
-const TYPE_COLORS: Record<AnnotationType, { badge: string; text: string }> = {
-	clarify: { badge: "bg-blue-500/20 text-blue-400", text: "Clarify" },
-	expand: { badge: "bg-emerald-500/20 text-emerald-400", text: "Expand" },
-	simplify: { badge: "bg-amber-500/20 text-amber-400", text: "Simplify" },
-	question: { badge: "bg-purple-500/20 text-purple-400", text: "Question" },
-	alternative: { badge: "bg-rose-500/20 text-rose-400", text: "Alternative" },
-};
+import { getTypeConfigSync } from "../lib/type-registry";
+import type { Annotation, TypeConfig } from "../types";
 
 function HistoryItem({
 	annotation,
+	allTypes,
 	dimmed,
 	onClick,
 }: {
 	annotation: Annotation;
+	allTypes: TypeConfig[];
 	dimmed?: boolean;
 	onClick: (a: Annotation) => void;
 }) {
-	const colors = TYPE_COLORS[annotation.type];
+	const config = getTypeConfigSync(annotation.type, allTypes);
 	const time = new Date(annotation.createdAt).toLocaleTimeString([], {
 		hour: "2-digit",
 		minute: "2-digit",
@@ -31,9 +26,9 @@ function HistoryItem({
 		>
 			<div className="mb-1 flex items-center justify-between">
 				<span
-					className={`rounded px-1.5 py-0.5 text-[10px] font-medium ${colors.badge}`}
+					className={`rounded px-1.5 py-0.5 text-[10px] font-medium ${config.badgeClass}`}
 				>
-					{colors.text}
+					{config.label}
 				</span>
 				<span className="text-[10px] text-zinc-600">{time}</span>
 			</div>
@@ -51,6 +46,7 @@ function StatusGroup({
 	label,
 	count,
 	annotations,
+	allTypes,
 	dimmed,
 	onClick,
 	defaultOpen,
@@ -58,6 +54,7 @@ function StatusGroup({
 	label: string;
 	count: number;
 	annotations: Annotation[];
+	allTypes: TypeConfig[];
 	dimmed?: boolean;
 	onClick: (a: Annotation) => void;
 	defaultOpen?: boolean;
@@ -77,6 +74,7 @@ function StatusGroup({
 					<HistoryItem
 						key={a.id}
 						annotation={a}
+						allTypes={allTypes}
 						dimmed={dimmed}
 						onClick={onClick}
 					/>
@@ -92,12 +90,14 @@ interface AnnotationHistoryProps {
 		accepted: Annotation[];
 		dismissed: Annotation[];
 	};
+	allTypes: TypeConfig[];
 	onAnnotationClick: (annotation: Annotation) => void;
 	onClose: () => void;
 }
 
 export function AnnotationHistory({
 	grouped,
+	allTypes,
 	onAnnotationClick,
 	onClose,
 }: AnnotationHistoryProps) {
@@ -146,6 +146,7 @@ export function AnnotationHistory({
 							label="Pending"
 							count={grouped.pending.length}
 							annotations={grouped.pending}
+							allTypes={allTypes}
 							onClick={onAnnotationClick}
 							defaultOpen
 						/>
@@ -153,6 +154,7 @@ export function AnnotationHistory({
 							label="Accepted"
 							count={grouped.accepted.length}
 							annotations={grouped.accepted}
+							allTypes={allTypes}
 							onClick={onAnnotationClick}
 							defaultOpen
 						/>
@@ -160,6 +162,7 @@ export function AnnotationHistory({
 							label="Dismissed"
 							count={grouped.dismissed.length}
 							annotations={grouped.dismissed}
+							allTypes={allTypes}
 							dimmed
 							onClick={onAnnotationClick}
 						/>

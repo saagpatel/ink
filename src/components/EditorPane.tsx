@@ -4,9 +4,11 @@ import { useAnnotations } from "../hooks/use-annotations";
 import { useEditor } from "../hooks/use-editor";
 import { useOllama } from "../hooks/use-ollama";
 import { computePositions } from "../lib/annotation-positioner";
+import { getAllTypes } from "../lib/type-registry";
 import type {
 	Annotation,
 	PositionedAnnotation,
+	TypeConfig,
 	WorkspaceSettings,
 } from "../types";
 import { AnnotationHistory } from "./AnnotationHistory";
@@ -27,6 +29,7 @@ interface EditorPaneProps {
 	onContentChange: (content: string) => void;
 	onToggleSettings: () => void;
 	onToggleHistory: () => void;
+	onToggleSearch: () => void;
 	onStatsChange: (stats: {
 		pending: number;
 		accepted: number;
@@ -45,13 +48,20 @@ export function EditorPane({
 	onContentChange,
 	onToggleSettings,
 	onToggleHistory,
+	onToggleSearch,
 	onStatsChange,
 }: EditorPaneProps) {
 	const editorContainerRef = useRef<HTMLDivElement>(null);
 	const previewRef = useRef<HTMLDivElement>(null);
 	const [previewHtml, setPreviewHtml] = useState("");
 	const [positioned, setPositioned] = useState<PositionedAnnotation[]>([]);
+	const [allTypes, setAllTypes] = useState<TypeConfig[]>([]);
 	const debounceTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
+
+	// Load type configs
+	useEffect(() => {
+		getAllTypes().then(setAllTypes);
+	}, []);
 
 	const {
 		annotations,
@@ -97,6 +107,7 @@ export function EditorPane({
 		onDismissAnnotation: handleDismissFirst,
 		onToggleSettings,
 		onToggleHistory,
+		onToggleSearch,
 	});
 
 	const { generating, error, scheduleGeneration, cancelGeneration } = useOllama(
@@ -243,6 +254,7 @@ export function EditorPane({
 				<AnnotationOverlay
 					annotations={positioned}
 					totalAnnotations={allAnnotations.length}
+					allTypes={allTypes}
 					onAccept={handleAccept}
 					onDismiss={handleDismiss}
 				/>
@@ -271,6 +283,7 @@ export function EditorPane({
 				{showHistory && (
 					<AnnotationHistory
 						grouped={grouped}
+						allTypes={allTypes}
 						onAnnotationClick={handleHistoryClick}
 						onClose={onToggleHistory}
 					/>

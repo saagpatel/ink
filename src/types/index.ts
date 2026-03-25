@@ -1,10 +1,29 @@
-export type AnnotationType =
+export type BuiltInAnnotationType =
 	| "clarify"
 	| "expand"
 	| "simplify"
 	| "question"
 	| "alternative";
+
+export type AnnotationType = string;
 export type AnnotationStatus = "pending" | "accepted" | "dismissed";
+
+export interface CustomAnnotationType {
+	id: number;
+	name: string;
+	label: string;
+	color: string;
+	prompt: string;
+}
+
+export interface TypeConfig {
+	name: string;
+	label: string;
+	color: string;
+	borderClass: string;
+	badgeClass: string;
+	prompt: (anchor: string, context: string) => string;
+}
 
 export interface WorkspaceFile {
 	id: number;

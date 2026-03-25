@@ -1,17 +1,10 @@
 import { invoke } from "@tauri-apps/api/core";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { getRecentAnnotationTypes } from "../lib/db";
-import { ANNOTATION_PROMPTS } from "../lib/prompt-templates";
+import { buildPrompt } from "../lib/prompt-templates";
 import { getAnchorRange } from "../lib/text-utils";
-import type { Annotation, AnnotationType, WorkspaceSettings } from "../types";
-
-const ANNOTATION_TYPES: AnnotationType[] = [
-	"clarify",
-	"expand",
-	"simplify",
-	"question",
-	"alternative",
-];
+import { getAllTypes } from "../lib/type-registry";
+import type { Annotation, WorkspaceSettings } from "../types";
 
 const DENSITY_MAX_PENDING: Record<number, number> = {
 	0: 0,
@@ -48,23 +41,37 @@ export function useOllama({
 	const [error, setError] = useState<string | null>(null);
 	const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 	const typeIndexRef = useRef(0);
+	const availableTypesRef = useRef<string[]>([
+		"clarify",
+		"expand",
+		"simplify",
+		"question",
+		"alternative",
+	]);
+
+	// Load all available types (built-in + custom)
+	useEffect(() => {
+		getAllTypes().then((types) => {
+			availableTypesRef.current = types.map((t) => t.name);
+		});
+	}, []);
 
 	const pickAnnotationType = useCallback(
-		async (fId: number): Promise<AnnotationType> => {
+		async (fId: number): Promise<string> => {
+			const types = availableTypesRef.current;
 			const recent = await getRecentAnnotationTypes(fId, 3);
 
-			// Don't repeat the same type 3x in a row
 			if (recent.length >= 2 && recent[0] === recent[1]) {
 				const avoid = recent[0];
-				const candidates = ANNOTATION_TYPES.filter((t) => t !== avoid);
+				const candidates = types.filter((t) => t !== avoid);
 				const idx = typeIndexRef.current % candidates.length;
 				typeIndexRef.current++;
 				return candidates[idx];
 			}
 
-			const idx = typeIndexRef.current % ANNOTATION_TYPES.length;
+			const idx = typeIndexRef.current % types.length;
 			typeIndexRef.current++;
-			return ANNOTATION_TYPES[idx];
+			return types[idx];
 		},
 		[],
 	);
@@ -92,7 +99,7 @@ export function useOllama({
 		setError(null);
 		try {
 			const annotationType = await pickAnnotationType(fileId);
-			const prompt = ANNOTATION_PROMPTS[annotationType](anchorText, content);
+			const prompt = await buildPrompt(annotationType, anchorText, content);
 
 			const result = await invoke<GenerateResponse>("generate_annotation", {
 				endpoint: settings.ollamaEndpoint,

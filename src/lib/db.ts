@@ -3,6 +3,7 @@ import type {
 	Annotation,
 	AnnotationStatus,
 	AnnotationType,
+	CustomAnnotationType,
 	WorkspaceSettings,
 } from "../types";
 
@@ -175,4 +176,173 @@ export async function getAnnotationStats(
 		stats[row.status] = row.count;
 	}
 	return stats;
+}
+
+// --- Custom Annotation Types ---
+
+export async function getCustomTypes(): Promise<CustomAnnotationType[]> {
+	const database = await getDb();
+	return database.select<CustomAnnotationType[]>(
+		"SELECT * FROM custom_annotation_types ORDER BY name",
+	);
+}
+
+export async function insertCustomType(
+	type: Omit<CustomAnnotationType, "id">,
+): Promise<number> {
+	const database = await getDb();
+	const result = await database.execute(
+		"INSERT INTO custom_annotation_types (name, label, color, prompt) VALUES ($1, $2, $3, $4)",
+		[type.name, type.label, type.color, type.prompt],
+	);
+	return result.lastInsertId ?? 0;
+}
+
+export async function updateCustomType(
+	id: number,
+	type: Omit<CustomAnnotationType, "id">,
+): Promise<void> {
+	const database = await getDb();
+	await database.execute(
+		"UPDATE custom_annotation_types SET name=$1, label=$2, color=$3, prompt=$4 WHERE id=$5",
+		[type.name, type.label, type.color, type.prompt, id],
+	);
+}
+
+export async function deleteCustomType(id: number): Promise<void> {
+	const database = await getDb();
+	await database.execute("DELETE FROM custom_annotation_types WHERE id = $1", [
+		id,
+	]);
+}
+
+// --- Prompt Overrides ---
+
+export async function loadPromptOverride(
+	typeName: string,
+): Promise<string | null> {
+	const database = await getDb();
+	const rows = await database.select<{ value: string }[]>(
+		"SELECT value FROM settings WHERE key = $1",
+		[`prompt_override_${typeName}`],
+	);
+	return rows.length > 0 ? rows[0].value : null;
+}
+
+export async function savePromptOverride(
+	typeName: string,
+	prompt: string,
+): Promise<void> {
+	await saveSetting(`prompt_override_${typeName}`, prompt);
+}
+
+export async function deletePromptOverride(typeName: string): Promise<void> {
+	const database = await getDb();
+	await database.execute("DELETE FROM settings WHERE key = $1", [
+		`prompt_override_${typeName}`,
+	]);
+}
+
+// --- Global Stats ---
+
+export interface GlobalStats {
+	total: number;
+	accepted: number;
+	dismissed: number;
+	pending: number;
+	avgLatencyMs: number | null;
+}
+
+export async function getGlobalStats(): Promise<GlobalStats> {
+	const database = await getDb();
+	const rows = await database.select<
+		{
+			total: number;
+			accepted: number;
+			dismissed: number;
+			pending: number;
+			avg_latency_ms: number | null;
+		}[]
+	>(
+		`SELECT
+			COUNT(*) as total,
+			SUM(CASE WHEN status='accepted' THEN 1 ELSE 0 END) as accepted,
+			SUM(CASE WHEN status='dismissed' THEN 1 ELSE 0 END) as dismissed,
+			SUM(CASE WHEN status='pending' THEN 1 ELSE 0 END) as pending,
+			AVG(latency_ms) as avg_latency_ms
+		FROM annotations`,
+	);
+	const r = rows[0];
+	return {
+		total: r.total,
+		accepted: r.accepted,
+		dismissed: r.dismissed,
+		pending: r.pending,
+		avgLatencyMs: r.avg_latency_ms ? Math.round(r.avg_latency_ms) : null,
+	};
+}
+
+export interface TypeStat {
+	type: string;
+	total: number;
+	accepted: number;
+	dismissed: number;
+}
+
+export async function getStatsByType(): Promise<TypeStat[]> {
+	const database = await getDb();
+	return database.select<TypeStat[]>(
+		`SELECT type, COUNT(*) as total,
+			SUM(CASE WHEN status='accepted' THEN 1 ELSE 0 END) as accepted,
+			SUM(CASE WHEN status='dismissed' THEN 1 ELSE 0 END) as dismissed
+		FROM annotations GROUP BY type ORDER BY total DESC`,
+	);
+}
+
+export interface FileStat {
+	name: string;
+	path: string;
+	total: number;
+	accepted: number;
+}
+
+export async function getStatsByFile(): Promise<FileStat[]> {
+	const database = await getDb();
+	return database.select<FileStat[]>(
+		`SELECT f.name, f.path, COUNT(a.id) as total,
+			SUM(CASE WHEN a.status='accepted' THEN 1 ELSE 0 END) as accepted
+		FROM annotations a JOIN files f ON a.file_id = f.id
+		GROUP BY f.id ORDER BY total DESC LIMIT 10`,
+	);
+}
+
+// --- Search ---
+
+export interface SearchResult extends Annotation {
+	filePath: string;
+	fileName: string;
+}
+
+interface SearchRow extends AnnotationRow {
+	file_path: string;
+	file_name: string;
+}
+
+export async function searchAnnotations(
+	query: string,
+	limit = 50,
+): Promise<SearchResult[]> {
+	const database = await getDb();
+	const rows = await database.select<SearchRow[]>(
+		`SELECT a.*, f.path as file_path, f.name as file_name
+		FROM annotations a JOIN files f ON a.file_id = f.id
+		WHERE a.body LIKE '%' || $1 || '%' OR a.anchor_text LIKE '%' || $1 || '%'
+		ORDER BY a.created_at DESC LIMIT $2`,
+		[query, limit],
+	);
+	return rows.map((r) => ({
+		...rowToAnnotation(r),
+		filePath: r.file_path,
+		fileName: r.file_name,
+	}));
 }
