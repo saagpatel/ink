@@ -1,7 +1,9 @@
 use serde::{Deserialize, Serialize};
 
 /// Allowed localhost hostnames for Ollama connectivity.
-const ALLOWED_HOSTS: &[&str] = &["localhost", "127.0.0.1", "::1"];
+/// Note: the `url` crate returns IPv6 addresses with surrounding brackets
+/// (e.g. `"[::1]"`), so both forms are listed here.
+const ALLOWED_HOSTS: &[&str] = &["localhost", "127.0.0.1", "::1", "[::1]"];
 
 /// Validate that the endpoint URL is a local-only address with an allowed scheme.
 /// Returns the normalised base URL string on success.
@@ -34,6 +36,93 @@ fn validate_ollama_endpoint(endpoint: &str) -> Result<String, String> {
         None => format!("{}://{}", scheme, host),
     };
     Ok(base)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    // ── validate_ollama_endpoint ────────────────────────────────────────────
+
+    #[test]
+    fn valid_localhost_http() {
+        let result = validate_ollama_endpoint("http://localhost:11434");
+        assert!(result.is_ok(), "http://localhost:11434 should be valid");
+        assert_eq!(result.unwrap(), "http://localhost:11434");
+    }
+
+    #[test]
+    fn valid_127_0_0_1_http() {
+        let result = validate_ollama_endpoint("http://127.0.0.1:11434");
+        assert!(result.is_ok(), "http://127.0.0.1:11434 should be valid");
+        assert_eq!(result.unwrap(), "http://127.0.0.1:11434");
+    }
+
+    #[test]
+    fn valid_localhost_https() {
+        let result = validate_ollama_endpoint("https://localhost:11434");
+        assert!(result.is_ok(), "https://localhost:11434 should be valid");
+        assert_eq!(result.unwrap(), "https://localhost:11434");
+    }
+
+    #[test]
+    fn valid_ipv6_loopback() {
+        // The url crate returns host_str() as "[::1]" (with brackets) for IPv6.
+        // ALLOWED_HOSTS lists both "::1" and "[::1]" to handle this.
+        let result = validate_ollama_endpoint("http://[::1]:11434");
+        assert!(result.is_ok(), "http://[::1]:11434 (IPv6 loopback) should be valid");
+    }
+
+    #[test]
+    fn rejected_remote_hostname() {
+        let result = validate_ollama_endpoint("http://remote.example.com:11434");
+        assert!(result.is_err(), "remote hostname should be rejected");
+        let err = result.unwrap_err();
+        assert!(err.contains("not allowed"), "error should mention 'not allowed'");
+    }
+
+    #[test]
+    fn rejected_private_network_ip() {
+        let result = validate_ollama_endpoint("http://192.168.1.1:11434");
+        assert!(result.is_err(), "private network IP should be rejected");
+    }
+
+    #[test]
+    fn rejected_ftp_scheme() {
+        let result = validate_ollama_endpoint("ftp://localhost:11434");
+        assert!(result.is_err(), "ftp scheme should be rejected");
+        let err = result.unwrap_err();
+        assert!(err.contains("not allowed"), "error should mention 'not allowed'");
+    }
+
+    #[test]
+    fn rejected_malformed_url() {
+        let result = validate_ollama_endpoint("not-a-url");
+        assert!(result.is_err(), "malformed URL should be rejected");
+    }
+
+    #[test]
+    fn rejected_empty_string() {
+        let result = validate_ollama_endpoint("");
+        assert!(result.is_err(), "empty string should be rejected");
+    }
+
+    #[test]
+    fn base_url_strips_trailing_slash() {
+        // Supplying a trailing slash should still yield a clean base URL.
+        let result = validate_ollama_endpoint("http://localhost:11434/");
+        assert!(result.is_ok());
+        // The reconstructed URL should not end with a slash.
+        assert!(!result.unwrap().ends_with('/'));
+    }
+
+    #[test]
+    fn base_url_without_port() {
+        // No port → scheme + host only.
+        let result = validate_ollama_endpoint("http://localhost");
+        assert!(result.is_ok());
+        assert_eq!(result.unwrap(), "http://localhost");
+    }
 }
 
 #[derive(Debug, Serialize)]

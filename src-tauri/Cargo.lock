@@ -1809,6 +1809,7 @@ dependencies = [
  "tauri-plugin-fs",
  "tauri-plugin-sql",
  "tauri-plugin-store",
+ "tempfile",
  "tokio",
 ]
 
