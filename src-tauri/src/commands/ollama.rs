@@ -1,5 +1,41 @@
 use serde::{Deserialize, Serialize};
 
+/// Allowed localhost hostnames for Ollama connectivity.
+const ALLOWED_HOSTS: &[&str] = &["localhost", "127.0.0.1", "::1"];
+
+/// Validate that the endpoint URL is a local-only address with an allowed scheme.
+/// Returns the normalised base URL string on success.
+fn validate_ollama_endpoint(endpoint: &str) -> Result<String, String> {
+    let parsed = reqwest::Url::parse(endpoint)
+        .map_err(|e| format!("Invalid endpoint URL '{}': {}", endpoint, e))?;
+
+    let scheme = parsed.scheme();
+    if scheme != "http" && scheme != "https" {
+        return Err(format!(
+            "Endpoint scheme '{}' is not allowed — use http or https",
+            scheme
+        ));
+    }
+
+    let host = parsed
+        .host_str()
+        .ok_or_else(|| format!("Endpoint '{}' has no host", endpoint))?;
+
+    if !ALLOWED_HOSTS.contains(&host) {
+        return Err(format!(
+            "Endpoint host '{}' is not allowed — Ollama must run on localhost",
+            host
+        ));
+    }
+
+    // Reconstruct a clean base URL (scheme + host + optional port, no trailing slash)
+    let base = match parsed.port() {
+        Some(port) => format!("{}://{}:{}", scheme, host, port),
+        None => format!("{}://{}", scheme, host),
+    };
+    Ok(base)
+}
+
 #[derive(Debug, Serialize)]
 pub struct OllamaModel {
     pub name: String,
@@ -14,12 +50,14 @@ pub struct OllamaStatus {
 
 #[tauri::command]
 pub async fn check_ollama(endpoint: String) -> Result<OllamaStatus, String> {
+    let base = validate_ollama_endpoint(&endpoint)?;
+
     let client = reqwest::Client::builder()
         .timeout(std::time::Duration::from_secs(3))
         .build()
         .map_err(|e| e.to_string())?;
 
-    let url = format!("{}/api/tags", endpoint.trim_end_matches('/'));
+    let url = format!("{}/api/tags", base);
 
     match client.get(&url).send().await {
         Ok(response) => {
@@ -78,12 +116,14 @@ pub async fn generate_annotation(
     model: String,
     prompt: String,
 ) -> Result<GenerateResponse, String> {
+    let base = validate_ollama_endpoint(&endpoint)?;
+
     let client = reqwest::Client::builder()
         .timeout(std::time::Duration::from_secs(30))
         .build()
         .map_err(|e| e.to_string())?;
 
-    let url = format!("{}/api/generate", endpoint.trim_end_matches('/'));
+    let url = format!("{}/api/generate", base);
 
     let payload = serde_json::json!({
         "model": model,

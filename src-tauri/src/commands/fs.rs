@@ -68,7 +68,55 @@ pub async fn read_file(path: String) -> Result<String, String> {
     fs::read_to_string(&path).map_err(|e| format!("Failed to read {}: {}", path, e))
 }
 
+/// Paths that write_file must never touch, regardless of workspace config.
+const BLOCKED_PREFIXES: &[&str] = &[
+    "/etc",
+    "/usr",
+    "/System",
+    "/bin",
+    "/sbin",
+    "/private/etc",
+    "/Library/Keychains",
+];
+
+fn is_safe_write_path(path: &str) -> Result<(), String> {
+    // Reject any path that contains a traversal component.
+    if path.contains("..") {
+        return Err(format!(
+            "Path traversal rejected: '{}'",
+            path
+        ));
+    }
+
+    // Expand a leading ~ to the home directory for comparison.
+    let expanded: String = if path.starts_with("~/") {
+        let home = std::env::var("HOME").unwrap_or_default();
+        format!("{}/{}", home, &path[2..])
+    } else {
+        path.to_string()
+    };
+
+    // Block sensitive home-directory paths.
+    let home = std::env::var("HOME").unwrap_or_default();
+    let blocked_home = [".ssh", ".claude", ".gnupg", ".aws", ".config/1Password"];
+    for suffix in &blocked_home {
+        if expanded.starts_with(&format!("{}/{}", home, suffix)) {
+            return Err(format!("Writing to '{}' is not permitted", path));
+        }
+    }
+
+    // Block system paths.
+    for prefix in BLOCKED_PREFIXES {
+        if expanded.starts_with(prefix) {
+            return Err(format!("Writing to '{}' is not permitted", path));
+        }
+    }
+
+    Ok(())
+}
+
 #[tauri::command]
 pub async fn write_file(path: String, content: String) -> Result<(), String> {
+    is_safe_write_path(&path)?;
     fs::write(&path, &content).map_err(|e| format!("Failed to write {}: {}", path, e))
 }
