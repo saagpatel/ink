@@ -123,6 +123,14 @@ mod tests {
         assert!(result.is_ok());
         assert_eq!(result.unwrap(), "http://localhost");
     }
+
+    #[test]
+    fn base_url_strips_path_component() {
+        // Users may paste an API-style path, but the validator should normalize to the base URL.
+        let result = validate_ollama_endpoint("http://localhost:11434/v1");
+        assert!(result.is_ok());
+        assert_eq!(result.unwrap(), "http://localhost:11434");
+    }
 }
 
 #[derive(Debug, Serialize)]
