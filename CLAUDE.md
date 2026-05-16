@@ -42,3 +42,51 @@ See IMPLEMENTATION-ROADMAP.md for full phase details and acceptance criteria.
 - Do not add features not in the current phase of IMPLEMENTATION-ROADMAP.md.
 - Do not use class components — hooks only.
 - Do not add workspace sync, cloud save, or multi-user features — ink is intentionally local-first.
+
+<!-- portfolio-context:start -->
+# Portfolio Context
+
+## What This Project Is
+
+ink is a local-first Markdown workspace editor where AI suggestions appear as handwritten-style margin annotations — not inline autocomplete, not a chat sidebar. The visual metaphor is a thoughtful editor leaving notes in the margins of your draft. Runs entirely local via Tauri 2 + Ollama.
+
+## Current State
+
+**Phase 0: Foundation — Project scaffold + SQLite schema + Ollama connectivity**
+See IMPLEMENTATION-ROADMAP.md for full phase details and acceptance criteria.
+
+## Stack
+
+- Runtime: Tauri 2.0 (Rust backend, React frontend)
+- UI: React 18 + TypeScript (strict)
+- Editor: CodeMirror 6 (Markdown mode, `@codemirror/lang-markdown`)
+- Annotations: SVG rendering via React, positioned using CM6's `EditorView.coordsAtPos()`
+- Database: SQLite via `tauri-plugin-sql` (rusqlite under the hood)
+- AI: Ollama local REST API (`http://localhost:11434`) — `llama3.2:3b` default, configurable
+- Styling: Tailwind CSS (CDN, utility classes only)
+- Font: Caveat (Google Fonts) for handwriting-style annotation text
+
+## How To Run
+
+```bash
+# Development
+npm run tauri dev
+
+# Build release app
+npm run tauri build
+```
+
+## Known Risks
+
+- Do not use `getBoundingClientRect()` on CodeMirror line elements — CM6 virtualizes the DOM and off-screen lines don't exist. Always use `EditorView.coordsAtPos()` for annotation positioning.
+- Do not call the Ollama API on every keystroke — debounce 2500ms after last keypress.
+- Do not store Ollama endpoint config in plaintext `.env` — use Tauri's store plugin for user preferences.
+- Do not add features not in the current phase of IMPLEMENTATION-ROADMAP.md.
+- Do not use class components — hooks only.
+- Do not add workspace sync, cloud save, or multi-user features — ink is intentionally local-first.
+
+## Next Recommended Move
+
+Use this context plus the README and supporting docs to resume the next active task, then promote the repo beyond minimum-viable by capturing a dedicated handoff, roadmap, or discovery artifact.
+
+<!-- portfolio-context:end -->
