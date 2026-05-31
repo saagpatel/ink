@@ -9,11 +9,13 @@ ink is a local-first Markdown workspace where AI suggestions appear as SVG overl
 ## Features
 
 - **Margin annotations** — SVG overlay cards positioned via CodeMirror 6's `coordsAtPos()` API, scroll-aware and viewport-clipped
-- **Five annotation types** — clarify, expand, simplify, question, alternative
+- **Five built-in annotation types** — clarify, expand, simplify, question, alternative; plus custom annotation type creation with configurable prompts
 - **Local AI via Ollama** — defaults to `llama3.2:3b`, configurable to `qwen2.5:7b` or any Ollama model
 - **Workspace folder view** — sidebar file tree for navigating a folder of Markdown files
 - **Accept / dismiss** — accepting an annotation inserts its text at the anchor point
 - **Annotation history** — per-file log of every annotation by status (pending, accepted, dismissed)
+- **Stats dashboard** — acceptance rate, type breakdown, and latency metrics across the workspace
+- **Workspace search** — search annotations across the workspace by content, type, and status
 - **Debounced generation** — Ollama called 2,500ms after your last keypress, never on every keystroke
 - **Settings panel** — configure endpoint, model, annotation density, and debounce delay
 

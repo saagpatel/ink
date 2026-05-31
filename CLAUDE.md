@@ -5,12 +5,12 @@ ink is a local-first Markdown workspace editor where AI suggestions appear as ha
 
 ## Tech Stack
 - Runtime: Tauri 2.0 (Rust backend, React frontend)
-- UI: React 18 + TypeScript (strict)
+- UI: React 19 + TypeScript 5.8 (strict)
 - Editor: CodeMirror 6 (Markdown mode, `@codemirror/lang-markdown`)
 - Annotations: SVG rendering via React, positioned using CM6's `EditorView.coordsAtPos()`
 - Database: SQLite via `tauri-plugin-sql` (rusqlite under the hood)
 - AI: Ollama local REST API (`http://localhost:11434`) — `llama3.2:3b` default, configurable
-- Styling: Tailwind CSS (CDN, utility classes only)
+- Styling: Tailwind CSS v4 (npm)
 - Font: Caveat (Google Fonts) for handwriting-style annotation text
 
 ## Development Conventions
@@ -22,8 +22,8 @@ ink is a local-first Markdown workspace editor where AI suggestions appear as ha
 - Unit tests for all data transform functions (annotation positioning math, text diff logic)
 
 ## Current Phase
-**Phase 0: Foundation — Project scaffold + SQLite schema + Ollama connectivity**
-See IMPLEMENTATION-ROADMAP.md for full phase details and acceptance criteria.
+**v1.0 — Phases 0–4 complete (foundation, editor, annotation engine, polish, stats/search/custom types + security hardening)**
+See IMPLEMENTATION-ROADMAP.md for phase details. See `docs/PORTFOLIO-DISPOSITION.md` for current status and unblock triggers.
 
 ## Key Decisions
 | Decision | Choice | Rationale |
@@ -52,18 +52,17 @@ ink is a local-first Markdown workspace editor where AI suggestions appear as ha
 
 ## Current State
 
-**Phase 0: Foundation — Project scaffold + SQLite schema + Ollama connectivity**
-See IMPLEMENTATION-ROADMAP.md for full phase details and acceptance criteria.
+**v1.0 — Phases 0–4 complete.** Foundation, editor, annotation engine, polish, and Phase 4 (stats dashboard, workspace search, custom annotation types, prompt customization) are all shipped. Security hardening (path restriction, SSRF guard, CSP) and baseline Rust tests landed as well.
 
 ## Stack
 
 - Runtime: Tauri 2.0 (Rust backend, React frontend)
-- UI: React 18 + TypeScript (strict)
+- UI: React 19 + TypeScript 5.8 (strict)
 - Editor: CodeMirror 6 (Markdown mode, `@codemirror/lang-markdown`)
 - Annotations: SVG rendering via React, positioned using CM6's `EditorView.coordsAtPos()`
 - Database: SQLite via `tauri-plugin-sql` (rusqlite under the hood)
 - AI: Ollama local REST API (`http://localhost:11434`) — `llama3.2:3b` default, configurable
-- Styling: Tailwind CSS (CDN, utility classes only)
+- Styling: Tailwind CSS v4 (npm)
 - Font: Caveat (Google Fonts) for handwriting-style annotation text
 
 ## How To Run
@@ -87,6 +86,6 @@ npm run tauri build
 
 ## Next Recommended Move
 
-Use this context plus the README and supporting docs to resume the next active task, then promote the repo beyond minimum-viable by capturing a dedicated handoff, roadmap, or discovery artifact.
+**Release Frozen.** Unblock requires: (1) Apple Developer ID + notarization credentials wired, (2) Ollama distribution strategy decided (document-only / bundled runtime / hybrid), (3) confirm `devCsp` from Vite HMR does not ship to production builds. See `docs/PORTFOLIO-DISPOSITION.md` for full unblock procedure.
 
 <!-- portfolio-context:end -->
