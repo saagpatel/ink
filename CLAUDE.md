@@ -33,7 +33,7 @@ See IMPLEMENTATION-ROADMAP.md for phase details. See `docs/PORTFOLIO-DISPOSITION
 | Annotation anchor model | Character offset spans (start_offset + end_offset) | Survives edits above anchor; line-level drifts on insert/delete |
 | Annotation positioning | `EditorView.coordsAtPos()` + scroll-aware SVG overlay | CM6 virtualizes lines — DOM rect queries fail off-screen |
 | AI model | `llama3.2:3b` default, `qwen2.5:7b` config option | Speed vs quality tradeoff; user-configurable in settings |
-| File watching | Tauri `fs` plugin with `watch()` | Detect external edits, reload workspace tree |
+| File watching | Not implemented — `refreshTree()` re-polls on demand | External edits require manual refresh; active `watch()` was planned but not shipped |
 
 ## Do NOT
 - Do not use `getBoundingClientRect()` on CodeMirror line elements — CM6 virtualizes the DOM and off-screen lines don't exist. Always use `EditorView.coordsAtPos()` for annotation positioning.
