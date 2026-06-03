@@ -89,3 +89,8 @@ npm run tauri build
 **Release Frozen.** Unblock requires: (1) Apple Developer ID + notarization credentials wired, (2) Ollama distribution strategy decided (document-only / bundled runtime / hybrid), (3) confirm `devCsp` from Vite HMR does not ship to production builds. See `docs/PORTFOLIO-DISPOSITION.md` for full unblock procedure.
 
 <!-- portfolio-context:end -->
+
+<!-- secondbrain-breadcrumb -->
+## SecondBrain knowledge vault
+
+Prior lessons, decisions, and context for this project live in SecondBrain at `wiki/maps/projects/ink.md`. The whole vault is searchable via the `engraph` MCP — query it for this project + its stack before non-trivial work.
