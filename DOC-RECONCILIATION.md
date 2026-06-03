@@ -20,105 +20,118 @@ running on Tauri 2.
 
 ### 2. Current state (phase / completeness)
 
-**Status:** drifted — fixed  
+**Status:** consistent (corrected in prior pass at 5640dc6 → 524a19c)  
 **Evidence:**
-- `src/components/StatsDashboard.tsx` exists (Phase 4 feature)
-- `src/components/SearchPanel.tsx` exists (Phase 4 feature)
-- `src/lib/type-registry.ts` + `src-tauri/migrations/003_custom_types.sql` — custom annotation
-  types shipped
-- `src-tauri/src/commands/ollama.rs:42-134` — Rust test suite present
-- `docs/PORTFOLIO-DISPOSITION.md` — explicitly states "v1.0 shipped, Phases 0-3 complete + Phase 4
-  (stats dashboard, search, custom types, prompt customization)"
-- `git log`: commits `8bb2ca0 feat: ink v1.0 — Phases 0-3 complete` and
-  `5fe231b feat(phase-4): stats dashboard, search, custom types, prompt customization`
+- `src/components/StatsDashboard.tsx` — Phase 4 stats dashboard present
+- `src/components/SearchPanel.tsx` — Phase 4 search panel present
+- `src/lib/type-registry.ts` — custom annotation types present
+- `src-tauri/migrations/003_custom_types.sql` — custom types migration present
+- `src-tauri/src/commands/fs.rs:124-332` — Rust test suite for fs safety present
+- `src-tauri/src/commands/ollama.rs:41-134` — Rust test suite for Ollama validation present
+- `CLAUDE.md:25` — correctly states "v1.0 — Phases 0–4 complete"
+- `CLAUDE.md:55` — Portfolio Context correctly states Phase 4 + security hardening shipped
 
-**CLAUDE.md (main) — `Current Phase` section:**  
-Before: `Phase 0: Foundation — Project scaffold + SQLite schema + Ollama connectivity`  
-After: `v1.0 — Phases 0–4 complete (foundation, editor, annotation engine, polish, stats/search/custom types + security hardening)`
-
-**CLAUDE.md (Portfolio Context) — `Current State` section:**  
-Before: `Phase 0: Foundation — Project scaffold + SQLite schema + Ollama connectivity`  
-After: `v1.0 — Phases 0–4 complete. Foundation, editor, annotation engine, polish, and Phase 4 (stats dashboard, workspace search, custom annotation types, prompt customization) are all shipped. Security hardening and baseline Rust tests landed as well.`
-
-**CLAUDE.md (Portfolio Context) — `Next Recommended Move` section:**  
-Before: `Use this context plus the README and supporting docs to resume the next active task, then promote the repo beyond minimum-viable by capturing a dedicated handoff, roadmap, or discovery artifact.`  
-After: `Release Frozen. Unblock requires: (1) Apple Developer ID + notarization credentials wired, (2) Ollama distribution strategy decided, (3) confirm devCsp does not ship to production builds. See docs/PORTFOLIO-DISPOSITION.md for full unblock procedure.`
-
-**README.md — Features list:**  
-Before: `Five annotation types — clarify, expand, simplify, question, alternative` (stats dashboard, search panel, custom types absent)  
-After: Added "Five built-in annotation types … plus custom annotation type creation with configurable prompts"; added Stats dashboard entry; added Workspace search entry.
+No changes required.
 
 ---
 
 ### 3. Stack
 
-**Status:** drifted — fixed  
+**Status:** consistent (corrected in prior pass at 5640dc6 → 524a19c)  
 **Evidence:**
-- `package.json:13` — `"react": "^19.1.0"` (React 19, not 18)
+- `package.json:13` — `"react": "^19.1.0"` (React 19)
 - `package.json:32` — `"typescript": "~5.8.3"` (TypeScript 5.8)
-- `package.json:29` — `"tailwindcss": "4.2.2"` as a direct npm dependency (not CDN)
-- `src/index.css:2` — `@import "tailwindcss"` (npm import, not CDN `<script>` tag)
-- `index.html` — no CDN script tag for Tailwind
-- `README.md:52` already correctly stated React 19 + TypeScript 5.8
+- `package.json:29` — `"tailwindcss": "4.2.2"` as a direct npm dependency (Tailwind CSS v4)
+- `src-tauri/Cargo.toml` — Tauri 2, tauri-plugin-sql 2.4, tauri-plugin-store 2, reqwest 0.12
+- `README.md:54-57` — correctly shows React 19 + TypeScript 5.8 + SQLite + Ollama
+- `CLAUDE.md:8-14` — correctly shows React 19 + TypeScript 5.8 + Tailwind CSS v4 (npm)
 
-**CLAUDE.md (both occurrences — main Tech Stack + Portfolio Context Stack):**  
-Before: `UI: React 18 + TypeScript (strict)` / `Styling: Tailwind CSS (CDN, utility classes only)`  
-After: `UI: React 19 + TypeScript 5.8 (strict)` / `Styling: Tailwind CSS v4 (npm)`
+No changes required.
 
 ---
 
 ### 4. How to run
 
 **Status:** consistent  
-**Evidence:** `package.json:6-11` defines `"tauri": "tauri"` script; `npm run tauri dev` and
-`npm run tauri build` therefore invoke `tauri dev` / `tauri build` respectively, matching both
-`README.md:39-44` and `CLAUDE.md` Portfolio Context `How To Run` section.
+**Evidence:** `package.json:6-11` defines scripts `"dev": "vite"`, `"build": "tsc && vite build"`,
+`"tauri": "tauri"`. The documented commands `npm run tauri dev` and `npm run tauri build` invoke
+`tauri dev` / `tauri build` respectively. Matches `README.md:40-45` and `CLAUDE.md:70-76`.
+
+No changes required.
 
 ---
 
-### 5. Known risks / Do NOT constraints
+### 5. Known risks / Key Decisions
 
-**Status:** consistent  
-**Evidence:** The `Do NOT` list in `CLAUDE.md` (no `getBoundingClientRect`, no keystroke Ollama
-calls, no `.env` config, etc.) remains accurate as engineering constraints. The security
-hardening in `src-tauri/src/commands/fs.rs:72-116` and `ollama.rs:10-39` implements several of
-these constraints in code, confirming their ongoing relevance.
+**Status:** drifted → fixed  
+**Evidence of drift:**
+- `CLAUDE.md:36` Key Decisions row claimed: `File watching | Tauri 'fs' plugin with 'watch()' | Detect external edits, reload workspace tree`
+- `src-tauri/src/lib.rs:37-43` — registered Tauri commands: `list_dir`, `read_file`, `write_file`, `check_ollama`, `generate_annotation`. No `watch_workspace` command registered.
+- `src-tauri/src/commands/fs.rs` — no `watch_workspace` function exists.
+- `src/hooks/use-workspace.ts:1-82` — no `watch()` import from `@tauri-apps/plugin-fs`; only `refreshTree()` (which re-invokes `list_dir` on demand). No active file-change subscription.
+
+**CLAUDE.md Key Decisions row — before:**  
+`| File watching | Tauri 'fs' plugin with 'watch()' | Detect external edits, reload workspace tree |`
+
+**CLAUDE.md Key Decisions row — after:**  
+`| File watching | Not implemented — 'refreshTree()' re-polls on demand | External edits require manual refresh; active 'watch()' was planned but not shipped |`
 
 ---
 
 ### 6. Next move / roadmap completeness
 
-**Status:** drifted — fixed (see claim 2 above for `Next Recommended Move` update)  
-**Evidence:** `docs/PORTFOLIO-DISPOSITION.md` is the authoritative current-state record. The
-"Next Recommended Move" text in CLAUDE.md's Portfolio Context section was updated to accurately
-reflect the Release Frozen disposition and the concrete unblock triggers documented there.
+**Status:** consistent (corrected in prior pass at 5640dc6 → 524a19c)  
+**Evidence:** `CLAUDE.md:87-89` Portfolio Context "Next Recommended Move" correctly states
+"Release Frozen" with three concrete unblock triggers: Apple signing credentials, Ollama
+distribution strategy, and devCsp prod-build audit. Matches `docs/PORTFOLIO-DISPOSITION.md`.
+
+The `tauri.conf.json:22-25` confirms production `csp` does not include `'unsafe-eval'`; only
+`devCsp` includes it (for Vite HMR). The PORTFOLIO-DISPOSITION concern is therefore a valid
+verification checklist item, not an open bug.
+
+No changes required.
 
 ---
 
 ## Contradictions for Manual Review
 
-These files contain drift but are outside the editable set (`README.md`, `CLAUDE.md`,
-`DOC-RECONCILIATION.md`, `docs/`):
+These files contain drift but are outside the editable set (`README.md`, `CLAUDE.md`, `AGENTS.md`,
+`DOC-RECONCILIATION.md`, `docs/`). No edits were made. A human should apply the one-line fixes below.
 
 ### `IMPLEMENTATION-ROADMAP.md`
-- **`IMPLEMENTATION-ROADMAP.md` — Scope Boundaries / Deferred section (lines 339–344):**  
-  Lists "Global annotation stats dashboard", "Annotation search across workspace", and "Custom
-  annotation type creation" as Phase 3+ deferred. All three shipped in Phase 4
-  (`5fe231b feat(phase-4)`). The roadmap has no Phase 4 section.  
-  **One-line fix a human should make:** Add a `## Phase 4` section documenting the delivered
-  features, and strike or update the Deferred list to remove the three items that shipped.
+
+1. **`IMPLEMENTATION-ROADMAP.md:339-344` — Scope Boundaries / Deferred section:**  
+   Lists "Global annotation stats dashboard", "Annotation search across workspace", and
+   "Custom annotation type creation" as Phase 3+ deferred. All three shipped in Phase 4
+   (`5fe231b feat(phase-4)`). The roadmap has no Phase 4 section.  
+   **One-line fix:** Add a `## Phase 4` section documenting the delivered features, and remove
+   or strike the three items from the Deferred list. *(Flagged in prior pass — still open.)*
+
+2. **`IMPLEMENTATION-ROADMAP.md:311` — Dependencies / Cargo.toml fragment:**  
+   Lists `reqwest = { version = "0.12", features = ["json", "blocking"] }`. The actual
+   `src-tauri/Cargo.toml:21` uses `features = ["json"]` only — `blocking` is absent (the
+   backend uses async commands, so `blocking` is not needed).  
+   **One-line fix:** Remove `"blocking"` from the reqwest features list in the roadmap example.
+
+3. **`IMPLEMENTATION-ROADMAP.md:249-254` — API contracts table:**  
+   Lists `watch_workspace` as a Tauri IPC command (`{ path: string } → event stream`).
+   `src-tauri/src/lib.rs:37-43` does not register this command; `src-tauri/src/commands/fs.rs`
+   does not define it.  
+   **One-line fix:** Remove the `watch_workspace` row from the API contracts table.
 
 ### `CHANGELOG.md`
-- **`CHANGELOG.md:9`:** Only entry is `- Initial release` under `[Unreleased]`. The project
-  shipped v1.0 (`abf247f chore: bump version to 1.0.0`) with Phases 0-3 (`8bb2ca0`), Phase 4
-  (`5fe231b`), security hardening (`de34019`), and Rust tests (`7b34c8d`).  
-  **One-line fix a human should make:** Populate a `## [1.0.0]` section with the shipped feature
-  list drawn from the commit log above.
+
+4. **`CHANGELOG.md:7-9`:**  
+   Only entry is `- Initial release` under `[Unreleased]`. The project shipped v1.0.0
+   (`abf247f`), Phases 0-3 (`8bb2ca0`), Phase 4 (`5fe231b`), security hardening (`de34019`),
+   and baseline Rust tests (`7b34c8d`). A security dependency bump shipped at `8321c08`.  
+   **One-line fix:** Populate a `## [1.0.0]` section with the shipped feature list drawn from
+   the git log above. *(Flagged in prior pass — still open.)*
 
 ---
 
 ## Footer
 
-**Generated:** 2026-05-30 22:56:34 PDT  
-**Branch:** docs/truth-up-2026-05-30  
-**HEAD reconciled against:** 5640dc6ef4c997c98b584cdd7672c2c035574118
+**Generated:** 2026-06-02 19:58:16 PDT  
+**Branch:** docs/truth-up-2026-06-02  
+**HEAD reconciled against:** 8321c08acc748711250de268d44b4d2201759756
