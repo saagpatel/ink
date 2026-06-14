@@ -1,0 +1,38 @@
+{
+	"$schema": "https://schema.tauri.app/config/2",
+	"productName": "ink",
+	"version": "1.0.0",
+	"identifier": "com.ink.app",
+	"build": {
+		"beforeDevCommand": "npm run dev",
+		"devUrl": "http://localhost:1420",
+		"beforeBuildCommand": "npm run build",
+		"frontendDist": "../dist"
+	},
+	"app": {
+		"windows": [
+			{
+				"title": "ink",
+				"width": 1400,
+				"height": 900,
+				"minWidth": 900,
+				"minHeight": 600
+			}
+		],
+		"security": {
+			"csp": "default-src 'self'; connect-src 'self' ipc: http://ipc.localhost http://localhost:* http://127.0.0.1:*; style-src 'self' 'unsafe-inline'; img-src 'self' data:",
+			"devCsp": "default-src 'self'; connect-src 'self' ipc: http://ipc.localhost http://localhost:* http://127.0.0.1:*; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; script-src 'self' 'unsafe-eval'"
+		}
+	},
+	"bundle": {
+		"active": true,
+		"targets": "all",
+		"icon": [
+			"icons/32x32.png",
+			"icons/128x128.png",
+			"icons/128x128@2x.png",
+			"icons/icon.icns",
+			"icons/icon.ico"
+		]
+	}
+}
