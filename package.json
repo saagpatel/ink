@@ -23,7 +23,7 @@
 		"@tauri-apps/plugin-sql": "^2",
 		"@tauri-apps/plugin-store": "^2",
 		"codemirror": "6.0.2",
-		"marked": "17.0.5",
+		"marked": "18.0.5",
 		"react": "^19.1.0",
 		"react-dom": "^19.1.0",
 		"tailwindcss": "4.2.2"
