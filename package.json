@@ -23,7 +23,7 @@
 		"@tauri-apps/plugin-sql": "^2",
 		"@tauri-apps/plugin-store": "^2",
 		"codemirror": "6.0.2",
-		"marked": "18.0.5",
+		"marked": "18.0.6",
 		"react": "^19.2.7",
 		"react-dom": "^19.2.7",
 		"tailwindcss": "4.3.2"
@@ -34,7 +34,7 @@
 		"@types/react-dom": "^19.1.6",
 		"@vitejs/plugin-react": "^6.0.3",
 		"typescript": "~6.0.3",
-		"vite": "^8.1.3"
+		"vite": "^8.1.4"
 	},
 	"pnpm": {
 		"overrides": {
