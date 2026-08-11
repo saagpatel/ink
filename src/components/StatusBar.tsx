@@ -63,17 +63,17 @@ export function StatusBar({
 		ollamaStatus.models.some((m) => m.name.startsWith(ollamaModel));
 
 	return (
-		<div className="flex h-7 shrink-0 items-center justify-between border-t border-zinc-800 bg-zinc-950 px-3 font-mono text-xs text-zinc-500">
+		<div className="flex h-7 shrink-0 items-center justify-between border-t border-line bg-desk px-3 font-mono text-xs text-ink-faint">
 			<div className="flex items-center gap-4">
-				{fileName && <span className="text-zinc-400">{fileName}</span>}
+				{fileName && <span className="text-ink-muted">{fileName}</span>}
 				{fileContent !== null && <span>{wordCount} words</span>}
 				{(pendingCount > 0 || acceptedCount > 0) && (
 					<span>
 						{pendingCount > 0 && (
-							<span className="text-amber-500/80">{pendingCount} pending</span>
+							<span className="text-pen">{pendingCount} pending</span>
 						)}
 						{pendingCount > 0 && acceptedCount > 0 && (
-							<span className="text-zinc-700"> · </span>
+							<span className="text-ink-faint"> · </span>
 						)}
 						{acceptedCount > 0 && (
 							<span className="text-emerald-500/70">
@@ -85,14 +85,14 @@ export function StatusBar({
 			</div>
 			<div className="flex items-center gap-3">
 				{lastLatencyMs !== null && (
-					<span className="text-zinc-600">{lastLatencyMs}ms</span>
+					<span className="text-ink-faint">{lastLatencyMs}ms</span>
 				)}
 				{ollamaStatus === null ? (
 					<span>Ollama: checking...</span>
 				) : ollamaStatus.connected ? (
-					<span className="flex items-center gap-1.5 text-emerald-500">
+					<span className="flex items-center gap-1.5 text-emerald-500/80">
 						{generating && (
-							<span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
+							<span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-pen" />
 						)}
 						Ollama: connected
 						{hasModel ? ` (${ollamaModel})` : " (model not found)"}
@@ -104,7 +104,7 @@ export function StatusBar({
 				<button
 					type="button"
 					onClick={onSearchClick}
-					className="text-zinc-600 transition-colors hover:text-zinc-300"
+					className="text-ink-faint transition-colors hover:text-ink"
 					title="Search annotations (⌘⇧F)"
 				>
 					<svg
@@ -125,7 +125,7 @@ export function StatusBar({
 				<button
 					type="button"
 					onClick={onStatsClick}
-					className="text-zinc-600 transition-colors hover:text-zinc-300"
+					className="text-ink-faint transition-colors hover:text-ink"
 					title="Annotation stats"
 				>
 					<svg
@@ -147,7 +147,7 @@ export function StatusBar({
 				<button
 					type="button"
 					onClick={onHistoryClick}
-					className="text-zinc-600 transition-colors hover:text-zinc-300"
+					className="text-ink-faint transition-colors hover:text-ink"
 					title="Annotation history (⌘⇧H)"
 				>
 					<svg
@@ -168,7 +168,7 @@ export function StatusBar({
 				<button
 					type="button"
 					onClick={onSettingsClick}
-					className="text-zinc-600 transition-colors hover:text-zinc-300"
+					className="text-ink-faint transition-colors hover:text-ink"
 					title="Settings (⌘,)"
 				>
 					<svg

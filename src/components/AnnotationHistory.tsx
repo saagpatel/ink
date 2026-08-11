@@ -22,7 +22,7 @@ function HistoryItem({
 		<button
 			type="button"
 			onClick={() => onClick(annotation)}
-			className={`w-full rounded px-3 py-2 text-left transition-colors hover:bg-zinc-800/50 ${dimmed ? "opacity-50" : ""}`}
+			className={`w-full rounded px-3 py-2 text-left transition-colors hover:bg-desk-hover/50 ${dimmed ? "opacity-50" : ""}`}
 		>
 			<div className="mb-1 flex items-center justify-between">
 				<span
@@ -30,12 +30,12 @@ function HistoryItem({
 				>
 					{config.label}
 				</span>
-				<span className="text-[10px] text-zinc-600">{time}</span>
+				<span className="text-[10px] text-ink-faint">{time}</span>
 			</div>
-			<p className="mb-1 line-clamp-2 text-xs leading-snug text-zinc-300">
+			<p className="mb-1 line-clamp-2 font-hand text-sm leading-snug text-pen">
 				{annotation.body}
 			</p>
-			<p className="line-clamp-1 text-[10px] text-zinc-600 italic">
+			<p className="line-clamp-1 text-[10px] text-ink-faint italic">
 				&ldquo;{annotation.anchorText}&rdquo;
 			</p>
 		</button>
@@ -63,9 +63,9 @@ function StatusGroup({
 
 	return (
 		<details open={defaultOpen} className="group">
-			<summary className="flex cursor-pointer items-center justify-between px-3 py-1.5 text-xs text-zinc-500 hover:text-zinc-300">
+			<summary className="flex cursor-pointer items-center justify-between px-3 py-1.5 text-xs text-ink-muted hover:text-ink">
 				<span>{label}</span>
-				<span className="rounded-full bg-zinc-800 px-1.5 py-0.5 text-[10px] text-zinc-400">
+				<span className="rounded-full bg-desk-hover px-1.5 py-0.5 text-[10px] text-ink-muted">
 					{count}
 				</span>
 			</summary>
@@ -105,15 +105,15 @@ export function AnnotationHistory({
 		grouped.pending.length + grouped.accepted.length + grouped.dismissed.length;
 
 	return (
-		<div className="absolute inset-y-0 right-0 z-30 flex w-72 flex-col border-l border-zinc-800 bg-zinc-950/95 backdrop-blur-sm">
-			<div className="flex items-center justify-between border-b border-zinc-800 px-3 py-2">
-				<span className="font-mono text-xs tracking-widest text-zinc-500 uppercase">
+		<div className="absolute inset-y-0 right-0 z-30 flex w-72 flex-col border-l border-line bg-desk/95 backdrop-blur-sm">
+			<div className="flex items-center justify-between border-b border-line px-3 py-2">
+				<span className="font-mono text-xs tracking-widest text-ink-faint uppercase">
 					History
 				</span>
 				<button
 					type="button"
 					onClick={onClose}
-					className="text-zinc-600 transition-colors hover:text-zinc-300"
+					className="text-ink-faint transition-colors hover:text-ink"
 				>
 					<svg
 						width="14"
@@ -133,10 +133,10 @@ export function AnnotationHistory({
 			<div className="flex-1 overflow-y-auto">
 				{total === 0 ? (
 					<div className="flex flex-col items-center gap-2 pt-12 text-center">
-						<p className="font-['Caveat',_cursive] text-lg text-zinc-700">
+						<p className="-rotate-1 font-hand text-lg text-ink-faint">
 							No annotations yet
 						</p>
-						<p className="text-[10px] text-zinc-600">
+						<p className="text-[10px] text-ink-faint">
 							Start writing and they'll appear here
 						</p>
 					</div>

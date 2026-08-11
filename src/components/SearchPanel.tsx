@@ -47,9 +47,9 @@ export function SearchPanel({
 
 	return (
 		<div className="fixed inset-0 z-50 flex items-start justify-center bg-black/60 pt-24 backdrop-blur-sm">
-			<div className="w-[560px] rounded-lg border border-zinc-800 bg-zinc-950 shadow-2xl">
+			<div className="w-[560px] rounded-lg border border-line bg-desk-raised shadow-2xl">
 				{/* Search input */}
-				<div className="flex items-center gap-2 border-b border-zinc-800 px-4 py-3">
+				<div className="flex items-center gap-2 border-b border-line px-4 py-3">
 					<svg
 						width="16"
 						height="16"
@@ -57,7 +57,7 @@ export function SearchPanel({
 						fill="none"
 						stroke="currentColor"
 						strokeWidth="2"
-						className="shrink-0 text-zinc-500"
+						className="shrink-0 text-ink-faint"
 					>
 						<circle cx="11" cy="11" r="8" />
 						<line x1="21" y1="21" x2="16.65" y2="16.65" />
@@ -69,14 +69,14 @@ export function SearchPanel({
 						onChange={(e) => handleChange(e.target.value)}
 						onKeyDown={(e) => e.key === "Escape" && onClose()}
 						placeholder="Search annotations..."
-						className="flex-1 bg-transparent text-sm text-zinc-200 outline-none placeholder:text-zinc-600"
+						className="flex-1 bg-transparent text-sm text-ink outline-none placeholder:text-ink-faint"
 					/>
 					<button
 						type="button"
 						onClick={onClose}
-						className="text-zinc-600 transition-colors hover:text-zinc-300"
+						className="text-ink-faint transition-colors hover:text-ink"
 					>
-						<kbd className="rounded border border-zinc-700 px-1.5 py-0.5 text-[10px] text-zinc-500">
+						<kbd className="rounded border border-line px-1.5 py-0.5 text-[10px] text-ink-faint">
 							esc
 						</kbd>
 					</button>
@@ -92,10 +92,10 @@ export function SearchPanel({
 									key={`${r.id}-${r.filePath}`}
 									type="button"
 									onClick={() => onResultClick(r)}
-									className="flex w-full flex-col gap-1 border-b border-zinc-800/50 px-4 py-3 text-left transition-colors hover:bg-zinc-900/50"
+									className="flex w-full flex-col gap-1 border-b border-line/50 px-4 py-3 text-left transition-colors hover:bg-desk-hover/50"
 								>
 									<div className="flex items-center gap-2">
-										<span className="text-[10px] text-zinc-600">
+										<span className="text-[10px] text-ink-faint">
 											{r.fileName}
 										</span>
 										<span
@@ -104,19 +104,19 @@ export function SearchPanel({
 											{config.label}
 										</span>
 									</div>
-									<p className="text-xs leading-snug text-zinc-300">{r.body}</p>
-									<p className="text-[10px] text-zinc-600 italic">
+									<p className="text-xs leading-snug text-ink">{r.body}</p>
+									<p className="text-[10px] text-ink-faint italic">
 										&ldquo;{r.anchorText}&rdquo;
 									</p>
 								</button>
 							);
 						})
 					) : searched ? (
-						<p className="px-4 py-6 text-center text-sm text-zinc-600">
+						<p className="px-4 py-6 text-center text-sm text-ink-faint">
 							No results for &ldquo;{query}&rdquo;
 						</p>
 					) : (
-						<p className="px-4 py-6 text-center text-sm text-zinc-600">
+						<p className="px-4 py-6 text-center text-sm text-ink-faint">
 							Type to search across all annotations
 						</p>
 					)}

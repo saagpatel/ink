@@ -1,3 +1,23 @@
+/* FOLLOW-UP: vendor Caveat (OFL) as local woff2 files to honor local-first —
+   the remote import is pre-existing behavior; offline it falls back to cursive. */
 @import url("https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&display=swap");
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
+
+/* ink's design language: the editor's desk at night.
+   Warm near-black surfaces, bone ink, and one fountain-pen blue reserved for
+   the AI editor's voice (handwriting, focus, live activity, data marks).
+   Every color and typeface in the app resolves to a token below —
+   the CodeMirror theme in use-editor.ts references these same variables. */
+@theme {
+	--color-desk: #14110d;
+	--color-desk-raised: #1e1913;
+	--color-desk-hover: #2a2318;
+	--color-line: #332b21;
+	--color-ink: #ede6d8;
+	--color-ink-muted: #9c907c;
+	--color-ink-faint: #6b6152;
+	--color-pen: #7c99cf;
+	--font-hand: "Caveat", cursive;
+	--font-prose: ui-serif, "New York", Georgia, serif;
+}
