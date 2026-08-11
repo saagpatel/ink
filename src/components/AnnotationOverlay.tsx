@@ -36,8 +36,8 @@ export const AnnotationOverlay = memo(function AnnotationOverlay({
 				))
 			) : totalAnnotations === 0 ? (
 				<div className="flex h-full items-start justify-end pr-6 pt-16">
-					<p className="font-['Caveat',_cursive] text-sm text-zinc-700">
-						Start writing — annotations will appear here
+					<p className="-rotate-1 font-hand text-lg text-ink-faint">
+						Start writing, notes will appear here
 					</p>
 				</div>
 			) : null}

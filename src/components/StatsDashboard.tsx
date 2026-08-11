@@ -37,15 +37,15 @@ export function StatsDashboard({ allTypes, onClose }: StatsDashboardProps) {
 
 	return (
 		<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-			<div className="max-h-[80vh] w-[640px] overflow-y-auto rounded-lg border border-zinc-800 bg-zinc-950 p-6 shadow-2xl">
+			<div className="max-h-[80vh] w-[640px] overflow-y-auto rounded-lg border border-line bg-desk-raised p-6 shadow-2xl">
 				<div className="mb-6 flex items-center justify-between">
-					<h2 className="text-sm font-medium tracking-wide text-zinc-200">
+					<h2 className="font-mono text-xs tracking-widest text-ink-muted uppercase">
 						Annotation Stats
 					</h2>
 					<button
 						type="button"
 						onClick={onClose}
-						className="text-zinc-500 transition-colors hover:text-zinc-300"
+						className="text-ink-faint transition-colors hover:text-ink"
 					>
 						<svg
 							width="16"
@@ -64,10 +64,10 @@ export function StatsDashboard({ allTypes, onClose }: StatsDashboardProps) {
 				</div>
 
 				{!global ? (
-					<p className="text-sm text-zinc-500">Loading...</p>
+					<p className="text-sm text-ink-muted">Loading...</p>
 				) : global.total === 0 ? (
-					<p className="py-12 text-center font-['Caveat',_cursive] text-xl text-zinc-700">
-						No annotations yet — start writing!
+					<p className="-rotate-1 py-12 text-center font-hand text-xl text-ink-faint">
+						No annotations yet, start writing!
 					</p>
 				) : (
 					<div className="space-y-8">
@@ -87,14 +87,14 @@ export function StatsDashboard({ allTypes, onClose }: StatsDashboardProps) {
 							<StatCard
 								label="Avg Latency"
 								value={global.avgLatencyMs ? `${global.avgLatencyMs}ms` : "—"}
-								color="text-zinc-400"
+								color="text-ink-muted"
 							/>
 						</div>
 
 						{/* By Type */}
 						{byType.length > 0 && (
 							<div>
-								<h3 className="mb-3 text-xs text-zinc-500 uppercase">
+								<h3 className="mb-3 font-mono text-xs tracking-widest text-ink-faint uppercase">
 									By Type
 								</h3>
 								<div className="space-y-2">
@@ -115,13 +115,13 @@ export function StatsDashboard({ allTypes, onClose }: StatsDashboardProps) {
 													>
 														{config.label}
 													</span>
-													<span className="text-zinc-500">
+													<span className="text-ink-faint">
 														{t.total} ({Math.round(acceptPct)}% accepted)
 													</span>
 												</div>
-												<div className="h-2 overflow-hidden rounded-full bg-zinc-800">
+												<div className="h-2 overflow-hidden rounded-full bg-desk-hover">
 													<div
-														className="h-full rounded-full bg-zinc-600 transition-all"
+														className="h-full rounded-full bg-pen/70 transition-all"
 														style={{
 															width: `${pct}%`,
 														}}
@@ -137,17 +137,17 @@ export function StatsDashboard({ allTypes, onClose }: StatsDashboardProps) {
 						{/* By File */}
 						{byFile.length > 0 && (
 							<div>
-								<h3 className="mb-3 text-xs text-zinc-500 uppercase">
+								<h3 className="mb-3 font-mono text-xs tracking-widest text-ink-faint uppercase">
 									Top Files
 								</h3>
 								<div className="space-y-1">
 									{byFile.map((f) => (
 										<div
 											key={f.path}
-											className="flex items-center justify-between rounded px-2 py-1.5 text-xs hover:bg-zinc-900"
+											className="flex items-center justify-between rounded px-2 py-1.5 text-xs hover:bg-desk-hover/50"
 										>
-											<span className="truncate text-zinc-300">{f.name}</span>
-											<span className="shrink-0 text-zinc-500">
+											<span className="truncate text-ink-muted">{f.name}</span>
+											<span className="shrink-0 text-ink-faint">
 												{f.total} annotations · {f.accepted} accepted
 											</span>
 										</div>
@@ -165,15 +165,17 @@ export function StatsDashboard({ allTypes, onClose }: StatsDashboardProps) {
 function StatCard({
 	label,
 	value,
-	color = "text-zinc-100",
+	color = "text-ink",
 }: {
 	label: string;
 	value: string | number;
 	color?: string;
 }) {
 	return (
-		<div className="rounded-lg border border-zinc-800 bg-zinc-900/50 p-3">
-			<p className="mb-1 text-[10px] text-zinc-500 uppercase">{label}</p>
+		<div className="rounded-lg border border-line bg-desk/60 p-3">
+			<p className="mb-1 font-mono text-[10px] tracking-widest text-ink-faint uppercase">
+				{label}
+			</p>
 			<p className={`text-xl font-light ${color}`}>{value}</p>
 		</div>
 	);

@@ -45,8 +45,8 @@ const TAILWIND_COLORS: Record<string, { border: string; badge: string }> = {
 };
 
 const DEFAULT_COLOR = {
-	border: "border-l-zinc-500",
-	badge: "bg-zinc-500/20 text-zinc-400",
+	border: "border-l-ink-faint",
+	badge: "bg-ink-faint/20 text-ink-muted",
 };
 
 function colorClasses(color: string) {
