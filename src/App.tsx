@@ -55,7 +55,7 @@ export default function App() {
 	);
 
 	return (
-		<div className="flex h-screen flex-col bg-zinc-950 text-zinc-100">
+		<div className="flex h-screen flex-col bg-desk text-ink">
 			<div className="flex min-h-0 flex-1">
 				<WorkspaceSidebar
 					tree={tree}
@@ -82,7 +82,7 @@ export default function App() {
 						/>
 					) : (
 						<div className="flex flex-1 items-center justify-center">
-							<p className="font-['Caveat',_cursive] text-3xl font-light text-zinc-700">
+							<p className="-rotate-1 font-hand text-3xl text-ink-faint">
 								{workspacePath
 									? "Select a file to start writing"
 									: "Open a workspace to begin"}

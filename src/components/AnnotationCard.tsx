@@ -17,10 +17,18 @@ export const AnnotationCard = memo(function AnnotationCard({
 }: AnnotationCardProps) {
 	const config = getTypeConfigSync(annotation.type, allTypes);
 
+	// A hair of alternating tilt keeps the margin notes feeling hand-placed
+	// rather than machine-stacked.
+	const tilt = annotation.id % 2 === 0 ? -0.5 : 0.4;
+
 	return (
 		<div
-			className={`absolute right-2 w-56 rounded-r border-l-2 ${config.borderClass} bg-zinc-900/90 p-3 shadow-lg backdrop-blur-sm transition-opacity`}
-			style={{ top: annotation.yPx, pointerEvents: "auto" }}
+			className={`absolute right-2 w-56 rounded-r border-l-2 ${config.borderClass} bg-desk-raised/95 p-3 shadow-lg backdrop-blur-sm transition-opacity`}
+			style={{
+				top: annotation.yPx,
+				pointerEvents: "auto",
+				transform: `rotate(${tilt}deg)`,
+			}}
 		>
 			<div className="mb-1.5 flex items-center justify-between">
 				<span
@@ -32,7 +40,7 @@ export const AnnotationCard = memo(function AnnotationCard({
 					<button
 						type="button"
 						onClick={() => onAccept(annotation.id)}
-						className="rounded p-0.5 text-zinc-500 transition-colors hover:bg-emerald-500/20 hover:text-emerald-400"
+						className="rounded p-0.5 text-ink-faint transition-colors hover:bg-emerald-500/20 hover:text-emerald-400"
 						title="Accept suggestion"
 					>
 						<svg
@@ -51,7 +59,7 @@ export const AnnotationCard = memo(function AnnotationCard({
 					<button
 						type="button"
 						onClick={() => onDismiss(annotation.id)}
-						className="rounded p-0.5 text-zinc-500 transition-colors hover:bg-red-500/20 hover:text-red-400"
+						className="rounded p-0.5 text-ink-faint transition-colors hover:bg-red-500/20 hover:text-red-400"
 						title="Dismiss"
 					>
 						<svg
@@ -70,7 +78,7 @@ export const AnnotationCard = memo(function AnnotationCard({
 					</button>
 				</div>
 			</div>
-			<p className="font-['Caveat',_cursive] text-sm leading-snug text-zinc-300">
+			<p className="font-hand text-base leading-snug text-pen">
 				{annotation.body}
 			</p>
 		</div>

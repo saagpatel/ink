@@ -46,15 +46,15 @@ export function SettingsPanel({
 
 	return (
 		<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-			<div className="w-96 rounded-lg border border-zinc-800 bg-zinc-950 p-6 shadow-2xl">
+			<div className="w-96 rounded-lg border border-line bg-desk-raised p-6 shadow-2xl">
 				<div className="mb-6 flex items-center justify-between">
-					<h2 className="text-sm font-medium tracking-wide text-zinc-200">
+					<h2 className="font-mono text-xs tracking-widest text-ink-muted uppercase">
 						Settings
 					</h2>
 					<button
 						type="button"
 						onClick={onClose}
-						className="text-zinc-500 transition-colors hover:text-zinc-300"
+						className="text-ink-faint transition-colors hover:text-ink"
 					>
 						<svg
 							width="16"
@@ -75,9 +75,9 @@ export function SettingsPanel({
 				<div className="space-y-5">
 					{/* Annotation Density */}
 					<div>
-						<label className="mb-2 block text-xs text-zinc-500">
+						<label className="mb-2 block text-xs text-ink-faint">
 							Annotation Density:{" "}
-							<span className="text-zinc-300">
+							<span className="text-ink">
 								{DENSITY_LABELS[settings.annotationDensity]}
 							</span>
 						</label>
@@ -93,9 +93,9 @@ export function SettingsPanel({
 									Number(e.target.value) as 0 | 1 | 2 | 3,
 								)
 							}
-							className="w-full accent-zinc-500"
+							className="w-full accent-pen"
 						/>
-						<div className="mt-1 flex justify-between text-[10px] text-zinc-600">
+						<div className="mt-1 flex justify-between text-[10px] text-ink-faint">
 							<span>Off</span>
 							<span>Occasional</span>
 							<span>Normal</span>
@@ -105,7 +105,7 @@ export function SettingsPanel({
 
 					{/* Ollama Endpoint */}
 					<div>
-						<label className="mb-1.5 block text-xs text-zinc-500">
+						<label className="mb-1.5 block text-xs text-ink-faint">
 							Ollama Endpoint
 						</label>
 						<input
@@ -113,18 +113,18 @@ export function SettingsPanel({
 							value={endpoint}
 							onChange={(e) => setEndpoint(e.target.value)}
 							onBlur={() => onUpdateSetting("ollamaEndpoint", endpoint)}
-							className="w-full rounded border border-zinc-800 bg-zinc-900 px-3 py-1.5 text-sm text-zinc-200 outline-none focus:border-zinc-600"
+							className="w-full rounded border border-line bg-desk px-3 py-1.5 text-sm text-ink outline-none focus:border-pen"
 						/>
 					</div>
 
 					{/* Model */}
 					<div>
-						<label className="mb-1.5 block text-xs text-zinc-500">Model</label>
+						<label className="mb-1.5 block text-xs text-ink-faint">Model</label>
 						{models.length > 0 ? (
 							<select
 								value={settings.ollamaModel}
 								onChange={(e) => onUpdateSetting("ollamaModel", e.target.value)}
-								className="w-full rounded border border-zinc-800 bg-zinc-900 px-3 py-1.5 text-sm text-zinc-200 outline-none focus:border-zinc-600"
+								className="w-full rounded border border-line bg-desk px-3 py-1.5 text-sm text-ink outline-none focus:border-pen"
 							>
 								{models.map((m) => (
 									<option key={m.name} value={m.name}>
@@ -137,7 +137,7 @@ export function SettingsPanel({
 								type="text"
 								value={settings.ollamaModel}
 								onChange={(e) => onUpdateSetting("ollamaModel", e.target.value)}
-								className="w-full rounded border border-zinc-800 bg-zinc-900 px-3 py-1.5 text-sm text-zinc-200 outline-none focus:border-zinc-600"
+								className="w-full rounded border border-line bg-desk px-3 py-1.5 text-sm text-ink outline-none focus:border-pen"
 								placeholder="e.g. llama3.2:3b"
 							/>
 						)}
@@ -145,7 +145,7 @@ export function SettingsPanel({
 
 					{/* Debounce */}
 					<div>
-						<label className="mb-1.5 block text-xs text-zinc-500">
+						<label className="mb-1.5 block text-xs text-ink-faint">
 							Debounce (ms)
 						</label>
 						<input
@@ -157,7 +157,7 @@ export function SettingsPanel({
 							onChange={(e) =>
 								onUpdateSetting("debounceMs", Number(e.target.value))
 							}
-							className="w-full rounded border border-zinc-800 bg-zinc-900 px-3 py-1.5 text-sm text-zinc-200 outline-none focus:border-zinc-600"
+							className="w-full rounded border border-line bg-desk px-3 py-1.5 text-sm text-ink outline-none focus:border-pen"
 						/>
 					</div>
 				</div>

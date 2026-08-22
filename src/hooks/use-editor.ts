@@ -4,43 +4,44 @@ import { EditorView, keymap } from "@codemirror/view";
 import { basicSetup } from "codemirror";
 import { useCallback, useEffect, useRef } from "react";
 
+// Colors and the prose face come from the design tokens in src/index.css —
+// CodeMirror inlines these rules, and var() keeps the single source of truth.
 const inkTheme = EditorView.theme(
 	{
 		"&": {
-			backgroundColor: "#09090b",
-			color: "#d4d4d8",
+			backgroundColor: "var(--color-desk)",
+			color: "var(--color-ink)",
 			height: "100%",
-			fontSize: "14px",
+			fontSize: "15px",
 		},
+		// The manuscript column sits left so the right side stays a true margin
+		// for annotation cards — the notes live where notes belong.
 		".cm-content": {
-			fontFamily: "'JetBrains Mono', 'SF Mono', 'Fira Code', monospace",
-			padding: "16px 0",
-			caretColor: "#e4e4e7",
+			fontFamily: "var(--font-prose)",
+			padding: "24px 0",
+			caretColor: "var(--color-ink)",
+			lineHeight: "1.7",
+			maxWidth: "58ch",
 		},
 		".cm-cursor": {
-			borderLeftColor: "#e4e4e7",
+			borderLeftColor: "var(--color-ink)",
 		},
 		".cm-activeLine": {
-			backgroundColor: "#18181b",
+			backgroundColor: "#1a1610",
 		},
 		".cm-selectionBackground": {
-			backgroundColor: "#27272a !important",
+			backgroundColor: "#3a3226 !important",
 		},
+		// A manuscript has no line numbers. Hidden via theme so the gutter
+		// extensions stay inert rather than reconfigured.
 		".cm-gutters": {
-			backgroundColor: "#09090b",
-			color: "#3f3f46",
-			border: "none",
-			paddingRight: "8px",
-		},
-		".cm-activeLineGutter": {
-			backgroundColor: "#18181b",
-			color: "#71717a",
+			display: "none",
 		},
 		".cm-line": {
-			padding: "0 16px",
+			padding: "0 20px",
 		},
 		"&.cm-focused .cm-selectionBackground": {
-			backgroundColor: "#27272a !important",
+			backgroundColor: "#3a3226 !important",
 		},
 		"&.cm-focused": {
 			outline: "none",

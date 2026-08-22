@@ -247,7 +247,7 @@ export function EditorPane({
 	);
 
 	return (
-		<div className="relative grid h-full grid-cols-2 divide-x divide-zinc-800">
+		<div className="relative grid h-full grid-cols-2 divide-x divide-line">
 			{/* Editor + annotation overlay */}
 			<div className="relative min-h-0 overflow-hidden">
 				<div ref={editorContainerRef} className="h-full" />
@@ -259,9 +259,9 @@ export function EditorPane({
 					onDismiss={handleDismiss}
 				/>
 				{generating && (
-					<div className="absolute bottom-2 right-2 z-20 flex items-center gap-1.5 rounded bg-zinc-800/80 px-2 py-1 text-[10px] text-zinc-400">
-						<span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-500" />
-						generating...
+					<div className="absolute bottom-2 right-2 z-20 flex items-center gap-1.5 rounded border border-line bg-desk-raised/90 px-2 py-1 text-[10px] text-ink-muted">
+						<span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-pen" />
+						writing a note...
 					</div>
 				)}
 				{error && (
@@ -275,7 +275,7 @@ export function EditorPane({
 			<div className="relative min-h-0">
 				<div
 					ref={previewRef}
-					className="prose prose-invert prose-zinc h-full max-w-none overflow-y-auto p-6 prose-headings:text-zinc-100 prose-p:text-zinc-300 prose-a:text-blue-400 prose-strong:text-zinc-200 prose-code:text-emerald-400 prose-pre:bg-zinc-900 prose-blockquote:border-zinc-700 prose-blockquote:text-zinc-400"
+					className="prose prose-invert h-full max-w-none overflow-y-auto p-6 font-prose prose-headings:text-ink prose-p:text-ink-muted prose-a:text-pen prose-strong:text-ink prose-em:text-ink-muted prose-li:text-ink-muted prose-code:text-pen prose-pre:bg-desk-raised prose-blockquote:border-line prose-blockquote:text-ink-muted"
 					dangerouslySetInnerHTML={{ __html: previewHtml }}
 				/>
 
