@@ -23,7 +23,7 @@ ink is a local-first Markdown workspace where AI suggestions appear as SVG overl
 
 ### Prerequisites
 - Rust stable toolchain
-- Node.js 24+ and npm (the locked Vite toolchain requires a supported newer runtime)
+- Node.js 20.19+ within the 20.x line, or 22.12+ and npm, matching the locked Vite toolchain
 - [Tauri platform prerequisites](https://v2.tauri.app/start/prerequisites/) for native builds
 - [Ollama](https://ollama.com) running locally only when exercising AI generation
 
