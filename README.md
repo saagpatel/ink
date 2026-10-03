@@ -48,8 +48,12 @@ npm run tauri build
 
 ## Verification
 
-Run from the repository root. The frontend check uses the committed npm lockfile
-and does not require Ollama, a model download, or a personal workspace:
+Run from the repository root. The Makefile and Tauri build hooks use npm.
+A `pnpm-lock.yaml` is also committed,
+but `package.json` does not pin a package-manager version.
+
+The frontend check uses the committed npm lockfile and does not require Ollama,
+a model download, or a personal workspace:
 
 ```bash
 npm ci
@@ -81,7 +85,8 @@ which changed interactions were exercised and which native paths remain untested
 | Layer | Technology |
 |-------|------------|
 | Desktop shell | Tauri 2 (Rust) |
-| Frontend | React 19 + TypeScript 5.8 (strict) |
+| Frontend | React 19.3 + TypeScript 7.0.2 (strict) |
+| Build / styling | Vite 8.3.1 + Tailwind CSS 4.3.3 via @tailwindcss/vite |
 | Editor | CodeMirror 6 (@codemirror/lang-markdown) |
 | Annotations | SVG overlay, positioned via EditorView.coordsAtPos() |
 | Local AI | Ollama REST API (llama3.2:3b default) |
