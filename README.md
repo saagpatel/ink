@@ -61,8 +61,13 @@ No frontend test runner, lint script, or format script is configured. Do not use
 and the Tauri platform prerequisites, check the committed Cargo lockfile:
 
 ```bash
+cargo test --locked --manifest-path src-tauri/Cargo.toml --lib build_tree_  # focused temp-tree fixtures
+cargo test --locked --manifest-path src-tauri/Cargo.toml --lib              # all native unit fixtures
 cargo check --locked --manifest-path src-tauri/Cargo.toml
 ```
+
+The native unit tests use temporary file trees and pure path/endpoint validation;
+they do not launch Ollama or write a personal workspace.
 
 For UI changes, use `npm run dev -- --host 127.0.0.1` for a local layout preview.
 It does not verify Tauri filesystem, SQLite, or Ollama integration. Full desktop
