@@ -23,14 +23,15 @@ ink is a local-first Markdown workspace where AI suggestions appear as SVG overl
 
 ### Prerequisites
 - Rust stable toolchain
-- Node.js 20+ and npm
-- [Ollama](https://ollama.com) running locally
+- Node.js 20.19+ within the 20.x line, or 22.12+ and npm, matching the locked Vite toolchain
+- [Tauri platform prerequisites](https://v2.tauri.app/start/prerequisites/) for native builds
+- [Ollama](https://ollama.com) running locally only when exercising AI generation
 
 ### Installation
 ```bash
 git clone https://github.com/saagpatel/ink
 cd ink
-npm install
+npm ci
 
 # Pull a model if you haven't already
 ollama pull llama3.2:3b
@@ -44,6 +45,36 @@ npm run tauri dev
 # Build release app
 npm run tauri build
 ```
+
+## Verification
+
+Run from the repository root. The frontend check uses the committed npm lockfile
+and does not require Ollama, a model download, or a personal workspace:
+
+```bash
+npm ci
+npm run build  # strict TypeScript checking and Vite build; also `make build`
+```
+
+No frontend test runner, lint script, or format script is configured. Do not use
+`npm test` or `make lint` as a gate. For native changes, after installing Rust
+and the Tauri platform prerequisites, check the committed Cargo lockfile:
+
+```bash
+cargo test --locked --manifest-path src-tauri/Cargo.toml --lib build_tree_  # focused temp-tree fixtures
+cargo test --locked --manifest-path src-tauri/Cargo.toml --lib              # all native unit fixtures
+cargo check --locked --manifest-path src-tauri/Cargo.toml
+```
+
+The native unit tests use temporary file trees and pure path/endpoint validation;
+they do not launch Ollama or write a personal workspace.
+
+For UI changes, use `npm run dev -- --host 127.0.0.1` for a local layout preview.
+It does not verify Tauri filesystem, SQLite, or Ollama integration. Full desktop
+checks can access persisted app settings and workspace files: use a disposable
+OS account and scratch Markdown folder. Keep generation off unless deliberately
+checking the local Ollama path. No automated browser suite is configured; record
+which changed interactions were exercised and which native paths remain untested.
 
 ## Tech Stack
 
